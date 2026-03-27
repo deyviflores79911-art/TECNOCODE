@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Preview: Sistema de Ventas de Celulares</title>
+    <style>
+        :root {
+            --primary: #2196F3;
+            --secondary: #FFC107;
+            --bg: #F5F5F7;
+            --text: #1D1D1F;
+            --white: #FFFFFF;
+            --card-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        #app {
+            background: var(--white);
+            width: 100%;
+            max-width: 450px;
+            min-height: 100vh;
+            position: relative;
+            box-shadow: 0 0 20px rgba(0,0,0,0.2);
+            overflow-x: hidden;
+        }
+
+        header {
+            background: var(--white);
+            padding: 16px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid #EEE;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .icons {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .badge-container {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: red;
+            color: white;
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 10px;
+        }
+
+        .search-bar {
+            background: #F2F2F7;
+            border-radius: 10px;
+            padding: 10px 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .search-bar input {
+            background: transparent;
+            border: none;
+            width: 100%;
+            outline: none;
+            font-size: 16px;
+        }
+
+        .brands {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding: 0 16px 16px;
+            scrollbar-width: none;
+        }
+
+        .brand-chip {
+            padding: 8px 16px;
+            background: #EEE;
+            border-radius: 20px;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .brand-chip.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .product-list {
+            padding: 16px;
+            display: grid;
+            gap: 16px;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 16px;
+            padding: 16px;
+            box-shadow: var(--card-shadow);
+            display: flex;
+            gap: 16px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .product-card:active {
+            transform: scale(0.98);
+        }
+
+        .product-img {
+            width: 80px;
+            height: 80px;
+            background: #F0F0F0;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+        }
+
+        .product-info {
+            flex: 1;
+        }
+
+        .product-name {
+            font-weight: 600;
+            font-size: 18px;
+        }
+
+        .product-brand {
+            color: #888;
+            font-size: 14px;
+        }
+
+        .product-price {
+            margin-top: 8px;
+            color: var(--primary);
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        /* Pages */
+        .page {
+            display: none;
+            padding-bottom: 80px;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        /* Details Page */
+        .details-page {
+            padding: 24px;
+        }
+
+        .details-img {
+            width: 100%;
+            height: 250px;
+            background: #F0F0F0;
+            border-radius: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 120px;
+            margin-bottom: 24px;
+        }
+
+        .details-title { font-size: 28px; font-weight: 700; }
+        .details-brand { font-size: 18px; color: #888; margin-bottom: 8px; }
+        .details-price { font-size: 24px; color: #2E7D32; font-weight: 700; margin-bottom: 20px; }
+        .details-desc { font-size: 16px; line-height: 1.5; color: #444; }
+
+        .btn-add {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 400px;
+            background: var(--primary);
+            color: white;
+            padding: 16px;
+            border-radius: 12px;
+            border: none;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(33, 150, 243, 0.4);
+        }
+
+        /* Login Page */
+        .login-page {
+            padding: 40px 24px;
+            text-align: center;
+        }
+
+        .input-group {
+            margin-bottom: 16px;
+            text-align: left;
+        }
+
+        .input-group label { display: block; margin-bottom: 8px; font-weight: 500; }
+        .input-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #CCC;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        .btn-login {
+            background: var(--primary);
+            color: white;
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+
+        /* Cart Page */
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px;
+            border-bottom: 1px solid #EEE;
+        }
+
+        .cart-footer {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            max-width: 450px;
+            background: white;
+            padding: 16px 24px;
+            box-shadow: 0 -4px 10px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .total-price { font-size: 22px; font-weight: 700; color: #2E7D32; }
+
+        /* Notification */
+        #toast {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #333;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            display: none;
+            z-index: 1000;
+        }
+
+    </style>
+</head>
+<body>
+
+<div id="app">
+    <!-- Header -->
+    <header id="main-header">
+        <div class="header-top">
+            <div id="btn-back" style="display: none; cursor: pointer; font-size: 24px;">←</div>
+            <div class="logo">PhoneStore</div>
+            <div class="icons">
+                <span id="user-name" style="font-weight: 500; display: none;">Hola, John</span>
+                <span id="btn-login-nav" style="cursor: pointer; font-size: 20px;">👤</span>
+                <div class="badge-container" id="btn-cart">
+                    <span style="font-size: 20px;">🛒</span>
+                    <span class="badge" id="cart-count">0</span>
+                </div>
+            </div>
+        </div>
+        <div id="search-container">
+            <div class="search-bar">
+                <span>🔍</span>
+                <input type="text" id="search-input" placeholder="Buscar celulares...">
+            </div>
+        </div>
+    </header>
+
+    <!-- Home Page -->
+    <div id="home-page" class="page active">
+        <div class="brands">
+            <div class="brand-chip active" onclick="filterByBrand(null, this)">Todos</div>
+            <div class="brand-chip" onclick="filterByBrand('Apple', this)">Apple</div>
+            <div class="brand-chip" onclick="filterByBrand('Samsung', this)">Samsung</div>
+            <div class="brand-chip" onclick="filterByBrand('Google', this)">Google</div>
+        </div>
+        <div class="product-list" id="product-list">
+            <!-- Products will load here -->
+        </div>
+    </div>
+
+    <!-- Details Page -->
+    <div id="details-page" class="page">
+        <div class="details-page">
+            <div class="details-img" id="det-img">📱</div>
+            <div class="details-brand" id="det-brand">Brand</div>
+            <div class="details-title" id="det-name">Product Name</div>
+            <div class="details-price" id="det-price">$0.00</div>
+            <div class="details-desc" id="det-desc">Description goes here...</div>
+            <button class="btn-add" id="btn-add-to-cart">Añadir al Carrito</button>
+        </div>
+    </div>
+
+    <!-- Login Page -->
+    <div id="login-page" class="page">
+        <div class="login-page">
+            <h2>Iniciar Sesión</h2>
+            <p style="color: #666; margin-bottom: 24px;">Usa user@test.com / password</p>
+            <div class="input-group">
+                <label>Email</label>
+                <input type="email" id="login-email" placeholder="email@ejemplo.com">
+            </div>
+            <div class="input-group">
+                <label>Contraseña</label>
+                <input type="password" id="login-pass" placeholder="********">
+            </div>
+            <button class="btn-login" id="btn-do-login">Entrar</button>
+        </div>
+    </div>
+
+    <!-- Cart Page -->
+    <div id="cart-page" class="page">
+        <div id="cart-items-list"></div>
+        <div class="cart-footer">
+            <div>
+                <div style="font-size: 14px; color: #888;">Total</div>
+                <div class="total-price" id="cart-total">$0.00</div>
+            </div>
+            <button class="btn-add" style="position: static; width: auto; margin: 0;" id="btn-checkout">Pagar</button>
+        </div>
+    </div>
+
+    <div id="toast">¡Añadido al carrito!</div>
+</div>
+
+<script>
+    const products = [
+        { id: '1', name: 'iPhone 15 Pro', brand: 'Apple', price: 999.99, desc: 'Diseño de titanio, chip A17 Pro y el sistema de cámaras más avanzado.', icon: '🍎' },
+        { id: '2', name: 'Samsung Galaxy S24 Ultra', brand: 'Samsung', price: 1199.99, desc: 'Con Galaxy AI para editar fotos y traducir llamadas al instante.', icon: '🪐' },
+        { id: '3', name: 'Google Pixel 8 Pro', brand: 'Google', price: 899.99, desc: 'La cámara más inteligente de Google con funciones de IA únicas.', icon: '🔍' },
+        { id: '4', name: 'iPhone 14', brand: 'Apple', price: 799.00, desc: 'Un gran sistema de cámaras y batería para todo el día.', icon: '📱' }
+    ];
+
+    let cart = [];
+    let currentUser = null;
+    let selectedProduct = null;
+    let currentFilteredProducts = [...products];
+
+    // Navigation
+    function showPage(pageId) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.getElementById(pageId).classList.add('active');
+        
+        const isHome = pageId === 'home-page';
+        document.getElementById('btn-back').style.display = isHome ? 'none' : 'block';
+        document.getElementById('search-container').style.display = isHome ? 'block' : 'none';
+    }
+
+    // UI Updates
+    function renderProducts(list) {
+        const container = document.getElementById('product-list');
+        container.innerHTML = list.map(p => `
+            <div class="product-card" onclick="viewDetails('${p.id}')">
+                <div class="product-img">📱</div>
+                <div class="product-info">
+                    <div class="product-name">${p.name}</div>
+                    <div class="product-brand">${p.brand}</div>
+                    <div class="product-price">$${p.price.toFixed(2)}</div>
+                </div>
+                <div style="align-self: center; font-size: 20px;">→</div>
+            </div>
+        `).join('');
+    }
+
+    function viewDetails(id) {
+        selectedProduct = products.find(p => p.id === id);
+        document.getElementById('det-name').innerText = selectedProduct.name;
+        document.getElementById('det-brand').innerText = selectedProduct.brand;
+        document.getElementById('det-price').innerText = `$${selectedProduct.price.toFixed(2)}`;
+        document.getElementById('det-desc').innerText = selectedProduct.desc;
+        showPage('details-page');
+    }
+
+    function filterByBrand(brand, el) {
+        document.querySelectorAll('.brand-chip').forEach(c => c.classList.remove('active'));
+        el.classList.add('active');
+        
+        currentFilteredProducts = brand ? products.filter(p => p.brand === brand) : [...products];
+        renderProducts(currentFilteredProducts);
+    }
+
+    // Cart Logic
+    function updateCartUI() {
+        document.getElementById('cart-count').innerText = cart.length;
+        const total = cart.reduce((sum, item) => sum + item.price, 0);
+        document.getElementById('cart-total').innerText = `$${total.toFixed(2)}`;
+
+        const list = document.getElementById('cart-items-list');
+        if (cart.length === 0) {
+            list.innerHTML = '<div style="padding: 40px; text-align: center; color: #888;">El carrito está vacío</div>';
+        } else {
+            list.innerHTML = cart.map((p, index) => `
+                <div class="cart-item">
+                    <div>
+                        <div style="font-weight: 600;">${p.name}</div>
+                        <div style="color: #2196F3;">$${p.price.toFixed(2)}</div>
+                    </div>
+                    <button onclick="removeFromCart(${index})" style="background: none; border: none; color: red; cursor: pointer;">Borrar</button>
+                </div>
+            `).join('');
+        }
+    }
+
+    function removeFromCart(index) {
+        cart.splice(index, 1);
+        updateCartUI();
+    }
+
+    function showToast(msg) {
+        const t = document.getElementById('toast');
+        t.innerText = msg;
+        t.style.display = 'block';
+        setTimeout(() => t.style.display = 'none', 2000);
+    }
+
+    // Events
+    document.getElementById('btn-back').onclick = () => showPage('home-page');
+    document.getElementById('btn-cart').onclick = () => {
+        updateCartUI();
+        showPage('cart-page');
+    };
+    document.getElementById('btn-login-nav').onclick = () => showPage('login-page');
+
+    document.getElementById('btn-add-to-cart').onclick = () => {
+        cart.push(selectedProduct);
+        updateCartUI();
+        showToast('¡Añadido al carrito!');
+    };
+
+    document.getElementById('btn-do-login').onclick = () => {
+        const email = document.getElementById('login-email').value;
+        const pass = document.getElementById('login-pass').value;
+        if (email === 'user@test.com' && pass === 'password') {
+            currentUser = { name: 'John Doe' };
+            document.getElementById('user-name').innerText = 'Hola, John';
+            document.getElementById('user-name').style.display = 'block';
+            document.getElementById('btn-login-nav').style.display = 'none';
+            showPage('home-page');
+        } else {
+            alert('Credenciales incorrectas');
+        }
+    };
+
+    document.getElementById('search-input').oninput = (e) => {
+        const query = e.target.value.toLowerCase();
+        const filtered = currentFilteredProducts.filter(p => 
+            p.name.toLowerCase().includes(query) || p.brand.toLowerCase().includes(query)
+        );
+        renderProducts(filtered);
+    };
+
+    document.getElementById('btn-checkout').onclick = () => {
+        if (!currentUser) {
+            alert('Debes iniciar sesión para comprar');
+            showPage('login-page');
+        } else {
+            alert('¡Gracias por tu compra! Pedido realizado con éxito.');
+            cart = [];
+            updateCartUI();
+            showPage('home-page');
+        }
+    };
+
+    // Init
+    renderProducts(products);
+</script>
+
+</body>
+</html>
