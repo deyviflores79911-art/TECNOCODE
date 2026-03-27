@@ -1,0 +1,26 @@
+name: cell_phone_sales
+description: A new Flutter project for a cell phone sales system.
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.2
+  material_design_icons_flutter: ^7.0.7296
+  provider: ^6.0.5
+  flutter_bloc: ^8.1.3
+  get_it: ^7.6.0
+  dio: ^5.3.3
+  shared_preferences: ^2.2.2
+  intl: ^0.18.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.0
+
+flutter:
+  uses-material-design: true
